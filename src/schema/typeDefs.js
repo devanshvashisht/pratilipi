@@ -2,7 +2,12 @@ const { gql } = require('apollo-server-express');
 
 const typeDefs = gql `
 
-    
+    directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT
+
+    enum CacheControlScope {
+        PUBLIC
+        PRIVATE
+    }
 
     type User{
         userId: Int!                 
@@ -111,14 +116,17 @@ const typeDefs = gql `
         access: Boolean!
     }
 
-
+    type Pro{
+        products: [Product!]
+        message: String!
+    }
     type Query {
         getUserProfile(userId: Int!): User 
         getAllUsers: [User!]        
 
 
         getProduct(productId: Int!): Product
-        getAllProducts: [Product!] 
+        getAllProducts: Pro @cacheControl(maxAge: 300)
 
 
         getOrder(orderId: Int!): Order

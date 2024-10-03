@@ -1,5 +1,5 @@
 
-const { ApolloServer } = require('apollo-server-express');
+const { ApolloServer,CacheControl } = require('apollo-server-express');
 const express = require('express');
 const morgan = require('morgan');
 const typeDefs = require('./src/schema/typeDefs');
@@ -55,11 +55,11 @@ const server = new ApolloServer({
   resolvers,
   cache,  // Use Redis cache
   context: ({ req }) => {
-    // Make sure to include cacheControl in the context
-    console.log('req',req.cacheControl);
+    
+    
     return {
-      cacheControl: req.cacheControl, // Pass cacheControl to context
-      // user: authenticate(req), // Any other context properties
+      
+      user: authenticate(req), // Any other context properties
     };
   },
   cacheControl: {

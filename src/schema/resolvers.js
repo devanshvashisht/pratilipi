@@ -2,7 +2,11 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../models');
 const { where } = require('sequelize');
-
+const Redis = require('ioredis');
+const redis = new Redis({
+  host: 'localhost', 
+  port: 6379, 
+});
 
 const resolvers = {
     Mutation: {
@@ -346,22 +350,32 @@ const resolvers = {
             return product;
         },
 
-        async getAllProducts() {
-            // if (!context) {
-            //     throw new Error('Context is not available');
-            // }
-            
-            // const {cacheControl} = context;
-            // console.log('Context:', context);
-            // if (!cacheControl) {
-            //     throw new Error('Cache control is not available in the context');
-            // }
-            // // Set cache hint for the query result to be cached for 300 seconds
-            // cacheControl.setCacheHint({ maxAge: 300 });  // Cache for 5 minutes
+        async getAllProducts(_, __) {
         
-            // // Fetch all products from the database
+
+            const cacheKey = 'allProducts'; 
+
+            // Check if the data is already in the Redis cache
+            const cachedProducts = await redis.get(cacheKey);
+            if (cachedProducts) {
+                // If data is found in cache, return it
+                console.log('Returning cached data');
+                return {
+                    message: 'Products retrieved from cache',
+                    products: JSON.parse(cachedProducts),
+                }; // Parse the cached JSON string back into an object
+            }
+           
+            // If data is not in cache, fetch it from the database
             const products = await db.Product.findAll(); 
-            return products; 
+
+            // Store the fetched data in Redis cache for 300 seconds
+            await redis.set(cacheKey, JSON.stringify(products), 'EX', 300); // Set expiry for 5 minutes
+
+            return {
+                message: 'Products retrieved from database',
+                products,
+            };
         },
 
         async verifyUser(_, { token }) {
