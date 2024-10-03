@@ -1,2 +1,2 @@
-# pratipili
-Assessment of Pratipili
+# pratilipi
+Assessment of Pratilipi
