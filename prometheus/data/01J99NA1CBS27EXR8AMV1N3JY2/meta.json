@@ -1,0 +1,17 @@
+{
+	"ulid": "01J99NA1CBS27EXR8AMV1N3JY2",
+	"minTime": 1727964128040,
+	"maxTime": 1727971200000,
+	"stats": {
+		"numSamples": 358662,
+		"numSeries": 529,
+		"numChunks": 2124
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01J99NA1CBS27EXR8AMV1N3JY2"
+		]
+	},
+	"version": 1
+}

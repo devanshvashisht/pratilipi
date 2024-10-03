@@ -1,42 +1,3 @@
-// require('dotenv').config();
-
-// const { ApolloServer } = require('apollo-server-express');
-// const express = require('express');
-// const morgan = require('morgan');
-// const typeDefs = require('./src/schema/typeDefs');
-// const resolvers = require('./src/schema/resolvers');
-// const authenticate = require('./src/middlewares/auth');
-// const db = require('./src/models');
-
-
-// const app = express();
-// const PORT = process.env.PORT;
-
-// app.use(morgan('dev'));
-// app.use(express.json());
-
-// const server = new ApolloServer({
-//   typeDefs,
-//   resolvers,
-//   context: ({ req }) => authenticate(req),
-// });
-
-// const startServer = async () => {
-//   await server.start();
-//   server.applyMiddleware({ app });
-
-//   app.listen(PORT, () => {
-//     console.log(`Server is running on http://localhost:${PORT}${server.graphqlPath}`);
-//   });
-// };
-
-// startServer();
-
-
-
-
-
-
 
 const { ApolloServer } = require('apollo-server-express');
 const express = require('express');
@@ -60,13 +21,13 @@ const PORT = process.env.PORT;
 app.use(morgan('dev'));
 app.use(express.json());
 
-// Create a Redis client
+
 const redis = new Redis({
-  host: 'localhost',  // Redis host (or replace with your host)
-  port: 6379,         // Redis port
+  host: 'localhost',  
+  port: 6379,         
 });
 
-// Set up Redis cache
+
 const cache = new RedisCache({
   client: redis,
 });
@@ -107,22 +68,37 @@ const server = new ApolloServer({
   plugins: [
     responseCachePlugin(),
     {
-      requestDidStart(){
-        return {
-          willSendResponse({request}){
-            console.log('request', request.operationName);
-            console.log('sa',typeof(request.operationName));
-            if (request.operationName == 'AddProduct') {
-              productAddedCounter.inc();
-            } else if (request.operationName == 'RegisterUser') {
-              userRegisteredCounter.inc();
-            } else if (request.operationName == 'CreateOrder') {
-              orderCreatedCounter.inc(); 
-            }    
-          },
-        };
-      },
-    },
+      
+        requestDidStart() {
+          return {
+            executionDidStart(requestContext) {
+              return {
+                willResolveField({ info }) {
+                  const operationName = info.fieldName; 
+                  
+                  
+                  if (operationName === '__schema') {
+                    return;
+                  }
+      
+                  console.log(`Processing operation: ${operationName}`);
+      
+                  
+                  if (operationName === 'addProduct') {
+                    productAddedCounter.inc();
+                  } else if (operationName === 'registerUser') {
+                    userRegisteredCounter.inc();
+                  } else if (operationName === 'createOrder') {
+                    orderCreatedCounter.inc();
+                  }
+                }
+              };
+            },
+          };
+        },
+      }
+      
+    
   ],
 
 });
