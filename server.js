@@ -48,6 +48,8 @@ const db = require('./src/models');
 const { RedisCache } = require('apollo-server-cache-redis');
 const Redis = require('ioredis');
 const responseCachePlugin = require('apollo-server-plugin-response-cache').default;
+const {collectDefaultMetrics, Counter, register} = require('prom-client');
+
 require('dotenv').config();
 
 
@@ -69,6 +71,23 @@ const cache = new RedisCache({
   client: redis,
 });
 
+collectDefaultMetrics();
+
+const productAddedCounter = new Counter({
+  name: 'graphql_product_added_total',
+  help: 'Total number of products added through GraphQL',
+});
+
+const userRegisteredCounter = new Counter({
+  name: 'graphql_user_registered_total',
+  help: 'Total number of users registered through GraphQL',
+});
+
+const orderCreatedCounter = new Counter({
+  name: 'graphql_order_created_total',
+  help: 'Total number of orders created through GraphQL',
+});
+
 // Set up Apollo Server with Redis caching
 const server = new ApolloServer({
   typeDefs,
@@ -87,13 +106,38 @@ const server = new ApolloServer({
   },
   plugins: [
     responseCachePlugin(),
+    {
+      requestDidStart(){
+        return {
+          willSendResponse({request}){
+            console.log('request', request.operationName);
+            console.log('sa',typeof(request.operationName));
+            if (request.operationName == 'AddProduct') {
+              productAddedCounter.inc();
+            } else if (request.operationName == 'RegisterUser') {
+              userRegisteredCounter.inc();
+            } else if (request.operationName == 'CreateOrder') {
+              orderCreatedCounter.inc(); 
+            }    
+          },
+        };
+      },
+    },
   ],
+
 });
+
+
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
+})
 
 // Start the Apollo Server with Express
 server.start().then(() => {
   server.applyMiddleware({ app });
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}/graphql`);
+    console.log(`Prometheus metrics is available at http://localhost:${PORT}/metrics`);
   });
 });
