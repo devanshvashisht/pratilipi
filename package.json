@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "amqplib": "^0.10.4",
     "apollo-server-cache-redis": "^3.3.1",
     "apollo-server-express": "^3.13.0",
     "apollo-server-plugin-response-cache": "^3.8.2",

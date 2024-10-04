@@ -8,6 +8,9 @@ const redis = new Redis({
   port: 6379, 
 });
 
+const { sendProductAddedEvent } = require('../services/productService/producer');
+
+
 const resolvers = {
     Mutation: {
         async registerUser(_, { input }) {
@@ -24,7 +27,7 @@ const resolvers = {
                 const user = await db.User.create({ name, email, contactNo, password: hashedPassword, language,isAdmin });
         
                 return {
-                    message: 'User resgistered successfully!',
+                    message: 'User registered successfully!',
                     user
                 };
 
@@ -132,16 +135,30 @@ const resolvers = {
 
             try {
                 const user = await db.User.findOne({where: {userId}});
+                if (!user) {
+                    throw new Error('User not found');
+                }
+
+
                 if(!user.isAdmin){
                     throw new Error('Unauthorized');
                 }else{
                     const existingProduct = await db.Product.findOne({ where: { name } });
                     if (existingProduct) {
-                        throw new Error('Product already exists');
+                        throw new Error('Product with this name already exists');
                     }
             
     
                     const product = await db.Product.create({ name, description, inventory, price});
+
+                    await sendProductAddedEvent({
+                        productId: product.productId,
+                        name: product.name,
+                        description: product.description,
+                        inventory: product.inventory,
+                        price: product.price
+                    });
+            
                     
                     return {
                         message: 'Product added Successfully',

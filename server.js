@@ -11,11 +11,17 @@ const Redis = require('ioredis');
 const responseCachePlugin = require('apollo-server-plugin-response-cache').default;
 const {collectDefaultMetrics, Counter, register} = require('prom-client');
 
+const { startProductConsumer } = require('./src/services/productService/consumer');
+const { createConnection, setupExchangesAndQueues } = require('./src/common/rabbitmq');
+
+const {startDLQHandler} = require('./src/common/dlqhandler');
+
 require('dotenv').config();
 
 
 const app = express();
 const PORT = process.env.PORT;
+
 
 
 app.use(morgan('dev'));
@@ -109,11 +115,22 @@ app.get('/metrics', async (req, res) => {
   res.end(await register.metrics());
 })
 
+startDLQHandler().catch(console.error);
+
 // Start the Apollo Server with Express
 server.start().then(() => {
   server.applyMiddleware({ app });
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}/graphql`);
     console.log(`Prometheus metrics is available at http://localhost:${PORT}/metrics`);
+
+
+    startProductConsumer(); // Start the RabbitMQ consumer for products
+    console.log('RabbitMQ consumer started.');
   });
 });
+
+
+createConnection()
+  .then(setupExchangesAndQueues())
+  .catch(console.error);
