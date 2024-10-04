@@ -23,7 +23,12 @@ const resolvers = {
         
                 const user = await db.User.create({ name, email, contactNo, password: hashedPassword, language,isAdmin });
         
-                return user;
+                return {
+                    message: 'User resgistered successfully!',
+                    user
+                };
+
+
             } catch (error) {
                 if (error.name === 'SequelizeValidationError') {
                     throw new Error('Validation error: ' + error.errors.map(err => err.message).join(', '));
@@ -57,7 +62,7 @@ const resolvers = {
 
             await user.update({token});
 
-            return {token, user};
+            return {message: 'User login successful!',user, token};
         },
 
         async updateUser(_,{input}){
@@ -74,7 +79,10 @@ const resolvers = {
                 if(language) user.language = language;
 
                 await user.save();
-                return user;
+                return {
+                    message: 'User updated succesfully!',
+                    user
+                };
 
             }catch(error){
                 if (error.name === 'SequelizeValidationError') {
@@ -135,7 +143,10 @@ const resolvers = {
     
                     const product = await db.Product.create({ name, description, inventory, price});
                     
-                    return product;
+                    return {
+                        message: 'Product added Successfully',
+                        product
+                    };
                 }
 
                 
@@ -171,7 +182,7 @@ const resolvers = {
 
                     await product.save();
 
-                    return product;
+                    return {message: 'Product updated successfully',product};
                 }
 
 
@@ -261,18 +272,18 @@ const resolvers = {
                     
                 });
 
-                return order;
+                return {message: 'Order placed successfully',order};
 
 
 
-                }catch(error){
-                    if (error.name === 'SequelizeValidationError') {
-                        throw new Error('Validation error: ' + error.errors.map(err => err.message).join(', '));
-                    } else if (error.name === 'SequelizeUniqueConstraintError') {
-                        throw new Error('Unique constraint error: ' + error.message);
-                    } else {
-                        throw new Error('Internal Server Error: ' + error.message);
-                    }
+            }catch(error){
+                if (error.name === 'SequelizeValidationError') {
+                    throw new Error('Validation error: ' + error.errors.map(err => err.message).join(', '));
+                } else if (error.name === 'SequelizeUniqueConstraintError') {
+                    throw new Error('Unique constraint error: ' + error.message);
+                } else {
+                    throw new Error('Internal Server Error: ' + error.message);
+                }
             }
         },
 

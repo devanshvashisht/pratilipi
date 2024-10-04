@@ -37,8 +37,10 @@ const typeDefs = gql `
     }
 
     type AuthPayload {
-        token: String!
+        message: String!
         user: User!
+        token: String!
+        
     }
 
     input UpdateUser{
@@ -53,6 +55,11 @@ const typeDefs = gql `
         message: String!
     }
 
+
+    type UserOutput{
+        user: User
+        message: String!
+    }
 
     type Product{
         productId: Int!                 
@@ -89,6 +96,11 @@ const typeDefs = gql `
         message: String!
     }
         
+    type ProductOutput{
+        product: Product
+        message: String!
+    }
+
     type Order{
         orderId: Int!
         productIds: [Int!]!
@@ -106,6 +118,13 @@ const typeDefs = gql `
         productIds: [Int!]!
         quantities: [Int!]!
     }
+
+
+    type OrderOutput{
+        message: String!,
+        order: Order
+    }
+
 
     type DeleteOrder{
         message: String!
@@ -137,15 +156,15 @@ const typeDefs = gql `
 
 
     type Mutation {
-        registerUser(input: RegisterUser): User   
+        registerUser(input: RegisterUser): UserOutput   
         loginUser(input: LoginUser): AuthPayload  
         
-        updateUser(input: UpdateUser): User
+        updateUser(input: UpdateUser): UserOutput
 
-        addProduct(input: AddProduct): Product
-        updateProduct(input: UpdateProduct): Product
+        addProduct(input: AddProduct): ProductOutput
+        updateProduct(input: UpdateProduct): ProductOutput
 
-        createOrder(input: CreateOrder): Order
+        createOrder(input: CreateOrder): OrderOutput
 
 
 
