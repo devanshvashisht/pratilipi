@@ -2,7 +2,7 @@ const {createConnection, setupExchangesAndQueues} = require('../../common/rabbit
 
 async function startProductConsumer() {
     const channel = await createConnection();
-    const { mainQueue } = await setupExchangesAndQueues(channel);
+    const { mainQueue} = await setupExchangesAndQueues(channel);
 
 
     channel.consume(mainQueue, async (msg) => {

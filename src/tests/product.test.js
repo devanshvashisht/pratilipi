@@ -1,35 +1,38 @@
 const supertest = require('supertest');
-const app = require('../../server');
+// const app = require('../../server');
 const portfinder = require('portfinder');
-
+const {startServer,stopServer} = require('../../server');
+const request  = require('supertest');
+const { closeConnection } = require('../common/rabbitmq');
+const { closeRedisConnection } = require('../../server');
 
 describe('Product Microservice', () => {
 
-    let server;
-    let PORT;
+    
 
     beforeAll(async () => {
-        PORT = await portfinder.getPortPromise();
-        console.log(`Server with port ${PORT} is being opened`);
-        server = await app.listen(PORT);
-    });
+        await startServer(); // Start the server before running tests
+      });
+      
+      afterAll(async () => {
+        await stopServer(); // Stop the server after tests
+        await closeConnection();
+        await closeRedisConnection();
 
-    afterAll(async () => {
-        console.log(`Server with port ${PORT} is being closed`);
-        await server.close();
-    });
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      });
 
 
 
     it('should add a product successfully', async () => {
-        const response = await supertest(app)
+        const response = await request('http://localhost:3001')
             .post('/graphql')
             .send({
                 query: `
                     mutation {
                         addProduct(input: {
-                            name: "Hot dog",
-                            description: "Sausage",
+                            name: "HideSeek",
+                            description: "Indian",
                             inventory: 10,
                             price: 300,
                             userId: 1
@@ -56,11 +59,11 @@ describe('Product Microservice', () => {
 
 
         expect(response.body.data.addProduct.message).toBe('Product added Successfully');
-        expect(response.body.data.addProduct.product.name).toBe('Hot dog');
+        expect(response.body.data.addProduct.product.name).toBe('HideSeek');
     });
 
     it('should return an error if product with this name already exists', async () => {
-        const response = await supertest(app)
+        const response = await request('http://localhost:3001')
             .post('/graphql')
             .send({
                 query: `

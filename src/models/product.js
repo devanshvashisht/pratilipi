@@ -1,6 +1,7 @@
 const {DataTypes} = require("sequelize");
 
 
+//defining sequelize model for products
 module.exports = (sequelize, DataTypes) => {
     const Product = sequelize.define('Product',{
         productId: {

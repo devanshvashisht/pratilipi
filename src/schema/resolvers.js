@@ -9,6 +9,8 @@ const redis = new Redis({
 });
 
 const { sendProductAddedEvent } = require('../services/productService/producer');
+const { sendUserAddedEvent } = require('../services/userService/producer');
+
 
 
 const resolvers = {
@@ -25,7 +27,19 @@ const resolvers = {
                 const hashedPassword = await bcrypt.hash(password, 10);
         
                 const user = await db.User.create({ name, email, contactNo, password: hashedPassword, language,isAdmin });
-        
+                
+                await sendUserAddedEvent({
+                    userId: user.userId,
+                    name: user.name,
+                    contactNo: user.contactNo,
+                    email:user.email,
+                    password: user.password,
+                    language: user.language,
+                    isAdmin: user.isAdmin,
+                    token: user.token
+                });
+
+
                 return {
                     message: 'User registered successfully!',
                     user
@@ -37,12 +51,7 @@ const resolvers = {
                     console.error('Validation error details:', error.errors);
                     throw new Error('Validation error: ' + error.errors.map(err => err.message).join(', '));
                 }    
-                // } else if (error.name === 'SequelizeUniqueConstraintError') {
-                //     throw new Error(error.message);
-                // } else {
-                    
-                //     throw new Error(error.message);
-                // }
+                
                 console.error('Registration error:', error); // Log other errors
                 throw new Error(error.message);
             }
@@ -303,7 +312,7 @@ const resolvers = {
                 } else if (error.name === 'SequelizeUniqueConstraintError') {
                     throw new Error('Unique constraint error: ' + error.message);
                 } else {
-                    throw new Error('Internal Server Error: ' + error.message);
+                    throw new Error(error.message);
                 }
             }
         },

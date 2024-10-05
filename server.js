@@ -1,4 +1,3 @@
-
 const { ApolloServer,CacheControl } = require('apollo-server-express');
 const express = require('express');
 const morgan = require('morgan');
@@ -13,10 +12,12 @@ const {collectDefaultMetrics, Counter, register} = require('prom-client');
 
 const { startProductConsumer } = require('./src/services/productService/consumer');
 const { createConnection, setupExchangesAndQueues } = require('./src/common/rabbitmq');
-
+const {startUserConsumer} = require('./src/services/userService/consumer');
 const {startDLQHandler} = require('./src/common/dlqhandler');
 
 require('dotenv').config();
+
+let httpServer;
 
 
 const app = express();
@@ -33,6 +34,9 @@ const redis = new Redis({
   port: 6379,         
 });
 
+function closeRedisConnection() {
+  return redis.quit();
+}
 
 const cache = new RedisCache({
   client: redis,
@@ -128,26 +132,60 @@ startDLQHandler().catch(console.error);
 
 
       startProductConsumer(); // Start the RabbitMQ consumer for products
+      startUserConsumer();
       console.log('RabbitMQ consumer started.');
     });
   });
 
 
 
-if (process.env.NODE_ENV !== 'test') {
-  createConnection()
-    .then(setupExchangesAndQueues)
-    .then(startServer)
-    .catch(console.error);
-} else {
-  console.log('Server not started as part of tests.');
-}
+// const startServer = async () => {
+//   await server.start();
+//   server.applyMiddleware({ app });
 
+//   return new Promise((resolve, reject) => {
+//     httpServer = app.listen(PORT, async () => {
+//       console.log(`Server is running on http://localhost:${PORT}/graphql`);
+//       console.log(`Prometheus metrics is available at http://localhost:${PORT}/metrics`);
+
+//       // Start RabbitMQ consumer
+//       await startProductConsumer();
+      
+
+//       await startUserConsumer();
+//       console.log('RabbitMQ consumer started.');
+
+//       // Start Dead Letter Queue handler
+//       await startDLQHandler().catch(console.error);
+
+//       // Set up RabbitMQ connection, exchanges, and queues
+//       await createConnection().then(setupExchangesAndQueues).catch(console.error);
+
+//       resolve();
+//     });
+
+//     httpServer.on('error', reject);
+//   });
+// };
+
+const stopServer = () => {
+  return new Promise((resolve, reject) => {
+    if (httpServer) {
+      httpServer.close((err) => {
+        if (err) return reject(err);
+        console.log('Server stopped.');
+        resolve();
+      });
+    } else {
+      resolve();
+    }
+  });
+};
 
 createConnection()
   .then(setupExchangesAndQueues())
   .catch(console.error);
 
 
-
-module.exports = app ;
+//below line for testing
+// module.exports = {app,startServer,stopServer,redis,closeRedisConnection} ;

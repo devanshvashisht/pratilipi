@@ -1,35 +1,38 @@
 const supertest = require('supertest');
-const app  = require('../../server');
+// const app  = require('../../server');
 const portfinder = require('portfinder');
-
+const { startServer, stopServer } = require('../../server'); 
+const  request  = require('supertest');
+const { closeConnection } = require('../common/rabbitmq');
+const { closeRedisConnection } = require('../../server');
 
 describe('Order Microservice', () => {
     
-    let server;
-    let PORT;
+    
 
     beforeAll(async () => {
-        PORT = await portfinder.getPortPromise();
-        console.log(`Server with port ${PORT} is being opened`);
-        server = await app.listen(PORT);
-    });
+        await startServer(); // Start the server before running tests
+      });
+      
+      afterAll(async () => {
+        await stopServer(); // Stop the server after tests
+        await closeConnection();
+        await closeRedisConnection();
 
-    afterAll(async () => {
-        console.log(`Server with port ${PORT} is being closed`);
-        await server.close();
-    });
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      });
 
 
     it('should create an order successfully', async () => {
-        const response = await supertest(app)
+        const response = await request('http://localhost:3001')
             .post('/graphql')
             .send({
                 query: `
                     mutation {
                         createOrder(input: {
-                            userId: 1,
-                            productIds: [16, 17],
-                            quantities: [1, 1]
+                            userId: 9,
+                            productIds: [6],
+                            quantities: [1]
                         }) {
                             message
                             order {
@@ -53,14 +56,14 @@ describe('Order Microservice', () => {
     });
 
     it('should return an error if insufficient inventory', async () => {
-        const response = await supertest(app)
+        const response = await request('http://localhost:3001')
             .post('/graphql')
             .send({
                 query: `
                     mutation {
                         createOrder(input: {
                             userId: 1,
-                            productIds: [5],
+                            productIds: [18],
                             quantities: [1]
                         }) {
                             message

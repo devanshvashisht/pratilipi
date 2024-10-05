@@ -1,39 +1,41 @@
 const supertest  = require('supertest');
-const app = require('../../server');
+// const app = require('../../server');
 const portfinder = require('portfinder');
 const { ApolloServer } = require('apollo-server-express');
 const typeDefs = require('../schema/typeDefs'); 
 const resolvers = require('../schema/resolvers');
-
-
+const { startServer, stopServer } = require('../../server');
+const request = require('supertest');
+const { closeConnection } = require('../common/rabbitmq');
+const { closeRedisConnection } = require('../../server');
 
 describe('User Microservice', () =>{
 
-    let server;
-    let PORT;
+    
 
     beforeAll(async () => {
-        PORT = await portfinder.getPortPromise();
-        console.log(`Server with port ${PORT} is being opened`);
-        server = await app.listen(PORT);
-    });
+        await startServer(); // Start the server before running tests
+      });
+      
+      afterAll(async () => {
+        await stopServer(); // Stop the server after tests
+        await closeConnection();
+        await closeRedisConnection();
 
-    afterAll(async () => {
-        console.log(`Server with port ${PORT} is being closed`);
-        await server.close();
-    });
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      });
 
 
     it('should register a user successfully', async () => {
-        const response = await supertest(app)
+        const response = await request('http://localhost:3001')
             .post('/graphql')
             .send({
                 query: `
                 mutation {
                     registerUser(input: {
-                        name: "Queen",
-                        email: "q@ema.com",
-                        contactNo: "9090909090",
+                        name: "chet",
+                        email: "ba@logic.com",
+                        contactNo: "690909990",
                         password: "Plpllp",
                         language: "English",
                         isAdmin: false
@@ -60,16 +62,16 @@ describe('User Microservice', () =>{
     });
 
     it('should return an error if user already exists', async () => {
-        const response = await supertest(app)
+        const response = await request('http://localhost:3001')
             .post('/graphql')
             .send({
                 query: `
                 mutation {
                     registerUser(input: {
-                        name: "Pre",
-                        email: "preas@email.com",
-                        contactNo: "998899889",
-                        password: "pppppp",
+                        name: "PPPPPPPP",
+                        email: "qwwqee@email.com",
+                        contactNo: "8874419900",
+                        password: "lappu",
                         language: "English",
                         isAdmin: false
                     }) {

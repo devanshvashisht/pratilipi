@@ -1,18 +1,21 @@
 const { createConnection, setupExchangesAndQueues } = require('./rabbitmq');
 
+
 async function startDLQHandler() {
     const { dlq } = await setupExchangesAndQueues();
 
 
     try{
+        // Create a connection to the RabbitMQ server
         const channel = await createConnection();
 
+        // Start consuming messages from the DLQ
         channel.consume(dlq, async (msg) => {
             if (msg) {
                 const messageContent = JSON.parse(msg.content.toString());
                 console.log('Message in DLQ:', messageContent);
 
-                // Optionally, reprocess the message or log it for further investigation
+                
                 // Acknowledge the message after processing
                 channel.ack(msg);
             }

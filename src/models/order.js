@@ -1,6 +1,6 @@
 const {DataTypes} = require("sequelize");
 
-
+//defining sequelize model for orders
 module.exports = (sequelize, DataTypes) => {
     const Order = sequelize.define('Order', {
         orderId: {
