@@ -59,6 +59,11 @@ In addition to the core **User**, **Product**, and **Order** services, the proje
 - **Single Query for Multiple Resources**: For example, in one request, you can fetch both the user profile and orders, reducing the number of API calls.
 - **Real-Time Updates**: GraphQL subscriptions (optional) could be added to listen to live data updates, like product inventory changes or new orders being placed.
 
+### Sample screenshot of the actual project
+<img src="screenshots/graphql.png" alt="GraphQL" width="700"/>
+
+  
+
 ---
 
 ## Caching with Redis
@@ -74,6 +79,9 @@ Caching is implemented using *Redis* to improve the performance of frequently ac
 ### Key Benefits:
 - **Faster Response Times**: The system returns cached responses instead of hitting the database every time a query is made.
 - **Reduced Database Load**: By caching commonly requested data, we offload unnecessary queries from the database.
+
+### Sample screenshot of the actual project
+<img src="screenshots/redis.png" alt="Redis" width="700"/>
 
 ---
 
@@ -102,6 +110,13 @@ Monitoring is essential for understanding the health and performance of the syst
 - **Real-Time Monitoring**: See how your services perform and track key metrics.
 - **System Health**: Identify bottlenecks or performance issues quickly by visualizing metrics in Grafana.
 
+### Sample screenshot of the actual project
+#### Prometheus
+<img src="screenshots/prometheus.png" alt="Prometheus" width="700"/>
+
+#### Grafana
+<img src="screenshots/grafana.png" alt="Grafana" width="700"/>
+
 ---
 
 ## Message Queue with RabbitMQ
@@ -122,6 +137,9 @@ A **Dead-Letter Queue (DLQ)** is used to handle failed message processing. If an
 ### Key Benefits:
 - **Asynchronous Processing**: Decouples services, improving scalability and reliability.
 - **Failure Handling with DLQ**: Ensures failed messages are captured and can be reprocessed, reducing the risk of data loss.
+
+### Sample screenshot of the actual project
+<img src="screenshots/rabbit mq product queue.png" alt="GraphQL" width="700"/>
 
 ---
 
@@ -180,6 +198,9 @@ Unit testing is a software testing technique that involves verifying individual 
 
 - **Early Bug Detection**: Unit tests help identify issues at an early stage, reducing the cost and effort required for debugging later in the development process. 
 - **Improved Code Quality**: Writing unit tests encourages better design and code structure, making the codebase easier to maintain and refactor over time.
+
+### Sample screenshot of the actual project
+<img src="screenshots/jest.png" alt="Jest" width="700"/>
   
 ---
 ## Technologies Used
