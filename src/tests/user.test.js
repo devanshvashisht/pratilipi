@@ -33,10 +33,10 @@ describe('User Microservice', () =>{
                 query: `
                 mutation {
                     registerUser(input: {
-                        name: "chet",
-                        email: "ba@logic.com",
-                        contactNo: "690909990",
-                        password: "Plpllp",
+                        name: "chinmay",
+                        email: "chinmay@logic.com",
+                        contactNo: "8427676767",
+                        password: "mypass",
                         language: "English",
                         isAdmin: false
                     }) {

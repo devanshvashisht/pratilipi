@@ -30,7 +30,7 @@ describe('Order Microservice', () => {
                 query: `
                     mutation {
                         createOrder(input: {
-                            userId: 9,
+                            userId: 10,
                             productIds: [6],
                             quantities: [1]
                         }) {

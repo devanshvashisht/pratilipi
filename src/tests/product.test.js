@@ -31,8 +31,8 @@ describe('Product Microservice', () => {
                 query: `
                     mutation {
                         addProduct(input: {
-                            name: "HideSeek",
-                            description: "Indian",
+                            name: "Chocochip",
+                            description: "Pudding",
                             inventory: 10,
                             price: 300,
                             userId: 1
@@ -59,7 +59,7 @@ describe('Product Microservice', () => {
 
 
         expect(response.body.data.addProduct.message).toBe('Product added Successfully');
-        expect(response.body.data.addProduct.product.name).toBe('HideSeek');
+        expect(response.body.data.addProduct.product.name).toBe('Chocochip');
     });
 
     it('should return an error if product with this name already exists', async () => {
