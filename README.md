@@ -20,7 +20,7 @@ This project is a microservices-based application that uses RabbitMQ for message
 
 In addition to the core **User**, **Product**, and **Order** services, the project includes several advanced features such as **GraphQL**, **caching**, **monitoring**, **message queue handling**, and **failure simulation**. These features aim to enhance the flexibility, performance, and observability of the system.
 
-
+---
 
 ## GraphQL
 
@@ -40,20 +40,22 @@ In addition to the core **User**, **Product**, and **Order** services, the proje
 - **Resolvers**: These functions handle the logic of what should happen when a specific GraphQL query or mutation is executed.
 
 ### Setting Up GraphQL for This Project:
-1. **Install Dependencies**:  
+1. **Install Dependencies**:
+   
    The main dependencies for setting up GraphQL include `apollo-server-express` for the server, and any necessary resolvers and typedefs to handle the business logic.
    - **Apollo Server**: Provides the framework for building GraphQL APIs.
    - **Resolvers**: Define the logic for handling GraphQL queries and mutations.
    - **TypeDefs**: Define the schema for the data types and operations allowed in the API.
 
 2. **Type Definitions and Resolvers**:  
-   -Define your schema in the `typedefs` file, which specifies the types and operations (queries and mutations) that can be performed. Implement the corresponding logic in the resolvers file.
+   Define your schema in the `typedefs` file, which specifies the types and operations (queries and mutations) that can be performed. Implement the corresponding logic in the resolvers file.
 
 3. **Setup Apollo Server**:  
    - The Apollo Server is configured in `server.js` to handle GraphQL queries and mutations through a single `/graphql` endpoint.
    - It also supports context setup for handling authentication and caching.
 
 ### Key Benefits in This Project:
+
 - **Single Query for Multiple Resources**: For example, in one request, you can fetch both the user profile and orders, reducing the number of API calls.
 - **Real-Time Updates**: GraphQL subscriptions (optional) could be added to listen to live data updates, like product inventory changes or new orders being placed.
 
