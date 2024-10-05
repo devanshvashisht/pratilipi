@@ -18,7 +18,7 @@ This project is a microservices-based application that uses RabbitMQ for message
 
 ## Features
 
-In addition to the core **User**, **Product**, and **Order** services, the project includes several advanced features such as **GraphQL**, **caching**, **monitoring**, **message queue handling**, and **failure simulation**. These features aim to enhance the flexibility, performance, and observability of the system.
+In addition to the core **User**, **Product**, and **Order** services, the project includes several advanced features such as **GraphQL**, **caching**, **monitoring**, **message queue handling**, **failure simulation** and **unit testing**. These features aim to enhance the flexibility, performance, and observability of the system.
 
 ---
 
@@ -170,6 +170,18 @@ Error handling is an integral part of the project, ensuring that all failures (w
 
 ---
 
+## Unit Testing
+
+### Overview
+
+Unit testing is a software testing technique that involves verifying individual components or functions of a program to ensure they work as intended. It helps catch bugs early in development, facilitates code refactoring, and improves overall code quality.
+
+### Key Benefits
+
+- **Early Bug Detection**: Unit tests help identify issues at an early stage, reducing the cost and effort required for debugging later in the development process. 
+- **Improved Code Quality**: Writing unit tests encourages better design and code structure, making the codebase easier to maintain and refactor over time.
+  
+---
 ## Technologies Used
 
 - Node.js
@@ -181,6 +193,7 @@ Error handling is an integral part of the project, ensuring that all failures (w
 - PostgreSQL
 - Prometheus
 - Grafana
+- Jest
 
 ---
 
@@ -202,12 +215,17 @@ Error handling is an integral part of the project, ensuring that all failures (w
 3. **Run the Application**:
    - To start the application, use:
      ```bash
-     npm start
+     node server.js
      ```
 
 4. **Access GraphQL Playground**:
    - Once the application is running, visit [http://localhost:3000/graphql](http://localhost:3000/graphql) in your browser to test the GraphQL API.
-
+   
+5. **Unit Testing**:
+   - To start the testing, use:
+     ```bash
+     npm test
+     ```
 ---
 
 ## API Endpoints
