@@ -82,6 +82,7 @@ Caching is implemented using *Redis* to improve the performance of frequently ac
 
 ### Sample screenshot of the actual project
 <img src="screenshots/redis.png" alt="Redis" width="700"/>
+<img src="screenshots/redis main.png" alt="Redis Main" width="700"/>
 
 ---
 
