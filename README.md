@@ -20,7 +20,7 @@ This project is a microservices-based application that uses RabbitMQ for message
 
 In addition to the core **User**, **Product**, and **Order** services, the project includes several advanced features such as **GraphQL**, **caching**, **monitoring**, **message queue handling**, and **failure simulation**. These features aim to enhance the flexibility, performance, and observability of the system.
 
----
+
 
 ## GraphQL
 
@@ -47,7 +47,7 @@ In addition to the core **User**, **Product**, and **Order** services, the proje
    - **TypeDefs**: Define the schema for the data types and operations allowed in the API.
 
 2. **Type Definitions and Resolvers**:  
-   Define your schema in the `typedefs` file, which specifies the types and operations (queries and mutations) that can be performed. Implement the corresponding logic in the resolvers file.
+   -Define your schema in the `typedefs` file, which specifies the types and operations (queries and mutations) that can be performed. Implement the corresponding logic in the resolvers file.
 
 3. **Setup Apollo Server**:  
    - The Apollo Server is configured in `server.js` to handle GraphQL queries and mutations through a single `/graphql` endpoint.

@@ -64,7 +64,6 @@ const server = new ApolloServer({
     
     
     return {
-      
       user: authenticate(req), // Any other context properties
     };
   },
@@ -117,20 +116,38 @@ app.get('/metrics', async (req, res) => {
 
 startDLQHandler().catch(console.error);
 
+
+
 // Start the Apollo Server with Express
-server.start().then(() => {
-  server.applyMiddleware({ app });
-  app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}/graphql`);
-    console.log(`Prometheus metrics is available at http://localhost:${PORT}/metrics`);
+
+  server.start().then(() => {
+    server.applyMiddleware({ app });
+    const httpServer = app.listen(PORT, (async) => {
+      console.log(`Server is running on http://localhost:${PORT}/graphql`);
+      console.log(`Prometheus metrics is available at http://localhost:${PORT}/metrics`);
 
 
-    startProductConsumer(); // Start the RabbitMQ consumer for products
-    console.log('RabbitMQ consumer started.');
+      startProductConsumer(); // Start the RabbitMQ consumer for products
+      console.log('RabbitMQ consumer started.');
+    });
   });
-});
+
+
+
+if (process.env.NODE_ENV !== 'test') {
+  createConnection()
+    .then(setupExchangesAndQueues)
+    .then(startServer)
+    .catch(console.error);
+} else {
+  console.log('Server not started as part of tests.');
+}
 
 
 createConnection()
   .then(setupExchangesAndQueues())
   .catch(console.error);
+
+
+
+module.exports = app ;

@@ -20,7 +20,7 @@ async function startProductConsumer() {
             channel.ack(msg);
         } catch (error) {
             console.error('Processing failed:', error);
-            console.log('Devansh');
+            
             channel.nack(msg, false, false); // Move to DLQ on failure
         }
     });

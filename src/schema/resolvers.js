@@ -34,13 +34,17 @@ const resolvers = {
 
             } catch (error) {
                 if (error.name === 'SequelizeValidationError') {
+                    console.error('Validation error details:', error.errors);
                     throw new Error('Validation error: ' + error.errors.map(err => err.message).join(', '));
-                } else if (error.name === 'SequelizeUniqueConstraintError') {
-                    throw new Error('Unique constraint error: ' + error.message);
-                } else {
+                }    
+                // } else if (error.name === 'SequelizeUniqueConstraintError') {
+                //     throw new Error(error.message);
+                // } else {
                     
-                    throw new Error('Registration failed: ' + error.message);
-                }
+                //     throw new Error(error.message);
+                // }
+                console.error('Registration error:', error); // Log other errors
+                throw new Error(error.message);
             }
         },
         
@@ -174,7 +178,7 @@ const resolvers = {
                     throw new Error('Unique constraint error: ' + error.message);
                 } else {
                     
-                    throw new Error('Internal Server Error: ' + error.message);
+                    throw new Error(error.message);
                 }
             }
         },
