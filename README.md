@@ -1,6 +1,4 @@
-# Pratilipi
-
-## Assessment of Pratilipi
+# Scalable Microservices Platform 
 
 ### Overview
 
